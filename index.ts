@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import userRoutes from "./routes/user.route";
+import messagesRoute from "./routes/message.route";
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/auth", userRoutes);
+app.use("/api/messages", messagesRoute);
 
 if (!process.env.MONGODB_URI) {
   throw new Error("Database uri not found in env file");
