@@ -1,4 +1,5 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "../models/user.model";
 
@@ -33,17 +34,34 @@ export async function registerUser(req: Request, res: Response) {
     // All is good! hash the password then save record to db
     const passwordHash = await bcrypt.hash(password, 10);
 
-    const newUser = new User({
+    // save to database
+    const user = await User.create({
       username,
-      email,
+      email: email.toLowerCase(),
       password: passwordHash,
       fullName,
     });
 
-    // save to database
-    await newUser.save();
+    // filter our password field from user
+    const { password: userPass, ...userWithoutPassword } = user.toJSON();
 
-    return res.status(201).json({ message: "User created successfully" });
+    // create token
+    const token = jwt.sign(
+      {
+        ...userWithoutPassword,
+      },
+      process.env.JWT_KEY!,
+      { expiresIn: "2h" }
+    );
+
+    const userToReturn = {
+      ...userWithoutPassword,
+      token,
+    };
+
+    return res
+      .status(201)
+      .json({ message: "User created successfully", userToReturn });
   } catch (error: any) {
     console.error("Error registering user:", error);
     res.status(500).json({
@@ -82,8 +100,20 @@ export async function loginUser(req: Request, res: Response) {
 
     const { password: passwordHash, ...userWithoutPassword } = user.toJSON();
 
+    const token = jwt.sign(
+      {
+        ...userWithoutPassword,
+      },
+      process.env.JWT_KEY!,
+      { expiresIn: "2h" }
+    );
+
+    const userToReturn = {
+      ...userWithoutPassword,
+      token,
+    };
     // login success!
-    return res.status(200).json({ userWithoutPassword });
+    return res.status(200).json({ userToReturn });
   } catch (error: any) {
     console.error("Error registering user:", error);
     res.status(500).json({
