@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 // extend request type to accomodate user
-interface AuthenticationRequest extends Request {
+export interface AuthenticationRequest extends Request {
   user: any;
 }
 

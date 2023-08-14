@@ -122,3 +122,32 @@ export async function loginUser(req: Request, res: Response) {
     });
   }
 }
+
+export async function getAllUsers(req: Request, res: Response) {
+  try {
+    const { id: userID } = req.params;
+
+    if (!userID) {
+      return res.status(400).json({ message: "user id missing" });
+    }
+
+    // ensure this userId exists in database
+    const user = await User.findById(userID);
+
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist" });
+    }
+
+    // fetch all users excluding the current user
+    const allUsers = await User.find({ _id: { $ne: userID } }).select([
+      "username",
+      "email",
+      "_id",
+      "fullName",
+    ]);
+
+    return res.status(200).json(allUsers);
+  } catch (error: any) {
+    console.log(`Error fetching users ${error.message}`);
+  }
+}
