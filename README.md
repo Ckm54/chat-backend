@@ -1,7 +1,12 @@
 # Chat App Backend
 
 Backend server for the Chat App, providing user authentication and messaging functionality. Built using Node.js, Express.js, and MongoDB.
-Features
+
+### Front-end repo:
+[Chat app front end](https://github.com/Ckm54/chat-app-client)
+
+
+## Features
 
 - User Registration:
   
@@ -23,7 +28,7 @@ Features
      - Add a new message to a conversation.
 
 
-##Getting Started
+## Getting Started
 Prerequisites
 
     Node.js and npm installed on your machine.
