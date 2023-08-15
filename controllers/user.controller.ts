@@ -16,20 +16,21 @@ export async function registerUser(req: Request, res: Response) {
     // check if there is an existing user with this name
     const usernameExists = await User.findOne({ username });
 
-    if (usernameExists)
-      return res.status(400).json({
-        errorCode: "USERNAME_TAKEN",
-        message: "Username already taken",
-      });
+    if (usernameExists) throw new Error("username already taken");
+    // return res.status(400).json({
+    //   errorCode: "USERNAME_TAKEN",
+    //   message: "Username already taken",
+    // });
 
     // check if email is already registered with another user
     const emailExits = await User.findOne({ email });
 
     if (emailExits)
-      return res.status(400).json({
-        errorCode: "EMAIL_TAKEN",
-        message: "Email is already registered with another user",
-      });
+      throw new Error("Email is already registered with another user");
+    // return res.status(400).json({
+    //   errorCode: "EMAIL_TAKEN",
+    //   message: "Email is already registered with another user",
+    // });
 
     // All is good! hash the password then save record to db
     const passwordHash = await bcrypt.hash(password, 10);
@@ -61,12 +62,12 @@ export async function registerUser(req: Request, res: Response) {
 
     return res
       .status(201)
-      .json({ message: "User created successfully", userToReturn });
+      .json({ message: "User created successfully", ...userToReturn });
   } catch (error: any) {
     console.error("Error registering user:", error);
     res.status(500).json({
       errorCode: "INTERNAL_ERROR",
-      message: "An error occurred while registering the user" + error.message,
+      message: error.message,
     });
   }
 }
@@ -113,7 +114,7 @@ export async function loginUser(req: Request, res: Response) {
       token,
     };
     // login success!
-    return res.status(200).json({ userToReturn });
+    return res.status(200).json(userToReturn);
   } catch (error: any) {
     console.error("Error registering user:", error);
     res.status(500).json({
@@ -135,7 +136,8 @@ export async function getAllUsers(req: Request, res: Response) {
     const user = await User.findById(userID);
 
     if (!user) {
-      return res.status(400).json({ message: "User does not exist" });
+      // return res.status(400).json({ message: "User does not exist" });
+      throw new Error("User does not exist");
     }
 
     // fetch all users excluding the current user

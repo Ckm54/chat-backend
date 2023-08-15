@@ -4,6 +4,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import userRoutes from "./routes/user.route";
 import messagesRoute from "./routes/message.route";
+import http from "http";
+import { ServerSocket } from "./socket";
 
 dotenv.config();
 
@@ -11,6 +13,11 @@ const app: Express = express();
 const port = process.env.PORT;
 app.use(cors());
 app.use(express.json());
+
+const server = http.createServer(app);
+
+//start the socket
+new ServerSocket(server);
 
 app.use("/api/auth", userRoutes);
 app.use("/api/messages", messagesRoute);
@@ -33,6 +40,6 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
 });
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });

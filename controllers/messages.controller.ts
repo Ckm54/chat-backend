@@ -54,6 +54,7 @@ export async function getAllMessages(
 
     // format chat messages to indicate sender and receiver for display in front end
     const conversationMessages = messages.map((message) => ({
+      id: message._id,
       fromSelf: message.from.toString() === from,
       message: message.message.text,
     }));

@@ -4,7 +4,6 @@ import {
   loginUser,
   registerUser,
 } from "../controllers/user.controller";
-import verifyToken from "../middleware/auth";
 
 const router = express.Router();
 
