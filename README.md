@@ -89,6 +89,7 @@ bash
     MongoDB
     Socket.io
     JWT (JSON Web Tokens)
+    Render -- Api hosting
 
 ## Future Enhancements
 
