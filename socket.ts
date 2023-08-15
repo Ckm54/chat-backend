@@ -7,7 +7,7 @@ export class ServerSocket {
   public static serverInstance: ServerSocket;
 
   // list of all users connected
-  public connectedUsers: any;
+  public connectedUsers: Map<string, string>;
 
   constructor(server: HTTPServer) {
     ServerSocket.serverInstance = this;
@@ -39,9 +39,11 @@ export class ServerSocket {
       console.log(this.connectedUsers);
       const sendUserSocket = this.connectedUsers.get(payload.to);
 
+      console.log(payload);
+
       if (sendUserSocket) {
         console.log("sending message 12345");
-        socket.to(sendUserSocket).emit("message-received", payload.message);
+        socket.to(sendUserSocket).emit("message-received", payload);
       }
     });
 
@@ -70,7 +72,7 @@ export class ServerSocket {
 
         // generate new user
         const uid = uuidV4();
-        this.connectedUsers[uid] = socket.id;
+        this.connectedUsers.set(uid, socket.id);
         const users: string[] = Object.values(this.connectedUsers);
 
         console.log("Sending callback for handshake...");
@@ -91,7 +93,7 @@ export class ServerSocket {
       const uid = this.GetUidFromSocket(socket.id);
 
       if (uid) {
-        delete this.connectedUsers[uid];
+        this.connectedUsers.delete(uid);
         const users: string[] = Object.values(this.connectedUsers);
         this.SendMessage("user_disconnected", users, uid);
       }
@@ -100,7 +102,7 @@ export class ServerSocket {
 
   GetUidFromSocket = (id: string) =>
     Object.keys(this.connectedUsers).find(
-      (uid) => this.connectedUsers[uid] === id
+      (uid) => this.connectedUsers.get(uid) === id
     );
 
   SendMessage = (name: string, users: string[], payload?: Object) => {
