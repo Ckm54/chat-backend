@@ -97,7 +97,7 @@ Start the server:
     JWT (JSON Web Tokens)
     Render -- Api hosting
 
-## Future Enhancements
+## Feature Enhancements
 
     User profile management
     
