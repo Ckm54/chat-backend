@@ -37,7 +37,7 @@ mongoose
   });
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Express + TypeScript Server");
+  res.send("Express + TypeScript Chat App Server");
 });
 
 server.listen(port, () => {
